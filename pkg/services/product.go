@@ -66,3 +66,18 @@ func (s *Server) ListProduct(ctx context.Context, _ *empty.Empty) (*pb.ListProdu
 		Products: products,
 	}, nil
 }
+
+func (s *Server) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.DeleteProductResponse, error) {
+	product := models.Product{Id: uint(req.Id)}
+
+	if result := s.H.DB.Delete(&product); result.Error != nil {
+		return &pb.DeleteProductResponse{
+			Status: http.StatusInternalServerError,
+			Error:  result.Error.Error(),
+		}, result.Error
+	}
+
+	return &pb.DeleteProductResponse{
+		Status: http.StatusOK,
+	}, nil
+}
