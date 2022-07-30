@@ -57,6 +57,7 @@ func (s *Server) ListProduct(ctx context.Context, _ *empty.Empty) (*pb.ListProdu
 		products = append(products, &pb.Product{
 			Id:          int64(product.Id),
 			Name:        product.Name,
+			Slug:        product.Slug,
 			Description: product.Description,
 			Stock:       product.Stock,
 			Price:       product.Price,
