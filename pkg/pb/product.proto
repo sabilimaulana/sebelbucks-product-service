@@ -16,10 +16,12 @@ service ProductService{
 message Product {
   int64 id = 1;
   string name = 2;
-  string description = 3;
-  int64 stock= 4;
-  int64 price = 5;
-  google.protobuf.Timestamp createdAt = 6;
+  string slug = 3;
+  string description = 4;
+  int64 stock= 5;
+  int64 price = 6;
+  google.protobuf.Timestamp createdAt = 7;
+  google.protobuf.Timestamp updatedAt = 8;
 }
 
 message CreateProductRequest {

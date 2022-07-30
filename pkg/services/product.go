@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/gosimple/slug"
 	"github.com/sabilimaulana/sebelbucks-product-service/pkg/db"
 	"github.com/sabilimaulana/sebelbucks-product-service/pkg/models"
 	"github.com/sabilimaulana/sebelbucks-product-service/pkg/pb"
@@ -23,6 +24,7 @@ func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest
 	product.Stock = req.Stock
 	product.Price = req.Price
 	product.Description = req.Description
+	product.Slug = slug.Make(product.Name)
 
 	if result := s.H.DB.Create(&product); result.Error != nil {
 		return &pb.CreateProductResponse{
@@ -58,6 +60,7 @@ func (s *Server) ListProduct(ctx context.Context, _ *empty.Empty) (*pb.ListProdu
 			Stock:       product.Stock,
 			Price:       product.Price,
 			CreatedAt:   timestamppb.New(product.CreatedAt),
+			UpdatedAt:   timestamppb.New(product.UpdatedAt),
 		})
 	}
 
