@@ -13,13 +13,17 @@ type Handler struct {
 }
 
 func Init(url string) Handler {
+	// Make connection
 	db, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 
+	// Error handling
+	// Will stop the program
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	db.AutoMigrate(&models.Product{})
+	// Migrate tables
+	db.AutoMigrate(&models.Product{}, &models.Variant{})
 
 	return Handler{db}
 }

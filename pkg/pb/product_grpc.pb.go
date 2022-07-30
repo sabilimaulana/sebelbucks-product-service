@@ -23,9 +23,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
+	// Product
 	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
 	ListProduct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProductResponse, error)
 	DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*DeleteProductResponse, error)
+	// Variant
+	CreateVariant(ctx context.Context, in *CreateVariantRequest, opts ...grpc.CallOption) (*CreateVariantResponse, error)
 }
 
 type productServiceClient struct {
@@ -63,13 +66,25 @@ func (c *productServiceClient) DeleteProduct(ctx context.Context, in *DeleteProd
 	return out, nil
 }
 
+func (c *productServiceClient) CreateVariant(ctx context.Context, in *CreateVariantRequest, opts ...grpc.CallOption) (*CreateVariantResponse, error) {
+	out := new(CreateVariantResponse)
+	err := c.cc.Invoke(ctx, "/product.ProductService/CreateVariant", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility
 type ProductServiceServer interface {
+	// Product
 	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
 	ListProduct(context.Context, *emptypb.Empty) (*ListProductResponse, error)
 	DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error)
+	// Variant
+	CreateVariant(context.Context, *CreateVariantRequest) (*CreateVariantResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -85,6 +100,9 @@ func (UnimplementedProductServiceServer) ListProduct(context.Context, *emptypb.E
 }
 func (UnimplementedProductServiceServer) DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
+}
+func (UnimplementedProductServiceServer) CreateVariant(context.Context, *CreateVariantRequest) (*CreateVariantResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateVariant not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 
@@ -153,6 +171,24 @@ func _ProductService_DeleteProduct_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_CreateVariant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateVariantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).CreateVariant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/product.ProductService/CreateVariant",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).CreateVariant(ctx, req.(*CreateVariantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -171,6 +207,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteProduct",
 			Handler:    _ProductService_DeleteProduct_Handler,
+		},
+		{
+			MethodName: "CreateVariant",
+			Handler:    _ProductService_CreateVariant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
