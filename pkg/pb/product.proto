@@ -7,6 +7,7 @@ import "google/protobuf/Empty.proto";
 
 option go_package = "./pkg/pb";
 
+// Declare service
 service ProductService{
   // Product
   rpc CreateProduct (CreateProductRequest) returns (CreateProductResponse);
@@ -14,6 +15,7 @@ service ProductService{
   rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse);
   // Variant
   rpc CreateVariant (CreateVariantRequest) returns (CreateVariantResponse);
+  rpc ListVariant (google.protobuf.Empty) returns (ListVariantResponse);
 }
 
 // Product
@@ -78,4 +80,10 @@ message CreateVariantResponse {
   int64 status = 1;
   string error = 2;
   int64 variantId = 3;
+}
+
+message ListVariantResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated Variant variants = 3;
 }
