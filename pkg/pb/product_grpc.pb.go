@@ -26,6 +26,7 @@ type ProductServiceClient interface {
 	// Product
 	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
 	ListProduct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProductResponse, error)
+	DetailProduct(ctx context.Context, in *DetailProductRequest, opts ...grpc.CallOption) (*DetailProductResponse, error)
 	DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*DeleteProductResponse, error)
 	// Variant
 	CreateVariant(ctx context.Context, in *CreateVariantRequest, opts ...grpc.CallOption) (*CreateVariantResponse, error)
@@ -52,6 +53,15 @@ func (c *productServiceClient) CreateProduct(ctx context.Context, in *CreateProd
 func (c *productServiceClient) ListProduct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProductResponse, error) {
 	out := new(ListProductResponse)
 	err := c.cc.Invoke(ctx, "/product.ProductService/ListProduct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) DetailProduct(ctx context.Context, in *DetailProductRequest, opts ...grpc.CallOption) (*DetailProductResponse, error) {
+	out := new(DetailProductResponse)
+	err := c.cc.Invoke(ctx, "/product.ProductService/DetailProduct", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,6 +102,7 @@ type ProductServiceServer interface {
 	// Product
 	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
 	ListProduct(context.Context, *emptypb.Empty) (*ListProductResponse, error)
+	DetailProduct(context.Context, *DetailProductRequest) (*DetailProductResponse, error)
 	DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error)
 	// Variant
 	CreateVariant(context.Context, *CreateVariantRequest) (*CreateVariantResponse, error)
@@ -108,6 +119,9 @@ func (UnimplementedProductServiceServer) CreateProduct(context.Context, *CreateP
 }
 func (UnimplementedProductServiceServer) ListProduct(context.Context, *emptypb.Empty) (*ListProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProduct not implemented")
+}
+func (UnimplementedProductServiceServer) DetailProduct(context.Context, *DetailProductRequest) (*DetailProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DetailProduct not implemented")
 }
 func (UnimplementedProductServiceServer) DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
@@ -163,6 +177,24 @@ func _ProductService_ListProduct_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProductServiceServer).ListProduct(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_DetailProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DetailProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).DetailProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/product.ProductService/DetailProduct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).DetailProduct(ctx, req.(*DetailProductRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -235,6 +267,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListProduct",
 			Handler:    _ProductService_ListProduct_Handler,
+		},
+		{
+			MethodName: "DetailProduct",
+			Handler:    _ProductService_DetailProduct_Handler,
 		},
 		{
 			MethodName: "DeleteProduct",

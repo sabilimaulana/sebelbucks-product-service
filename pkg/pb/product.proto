@@ -12,6 +12,7 @@ service ProductService{
   // Product
   rpc CreateProduct (CreateProductRequest) returns (CreateProductResponse);
   rpc ListProduct (google.protobuf.Empty) returns (ListProductResponse);
+  rpc DetailProduct (DetailProductRequest) returns (DetailProductResponse);
   rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse);
   // Variant
   rpc CreateVariant (CreateVariantRequest) returns (CreateVariantResponse);
@@ -43,7 +44,17 @@ message CreateProductResponse {
   int64 productId = 3;
 }
 
-message ListProductResponse{
+message DetailProductRequest {
+  int64 productId = 1;
+}
+
+message DetailProductResponse {
+  int64 status = 1;
+  string error = 2;
+  Product product = 3;
+}
+
+message ListProductResponse {
   int64 status = 1;
   string error = 2;
   repeated Product products = 3;

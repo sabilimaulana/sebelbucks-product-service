@@ -72,6 +72,31 @@ func (s *Server) ListProduct(ctx context.Context, _ *empty.Empty) (*pb.ListProdu
 	}, nil
 }
 
+func (s *Server) DetailProduct(ctx context.Context, req *pb.DetailProductRequest) (*pb.DetailProductResponse, error) {
+	product := models.Product{Id: uint(req.ProductId)}
+
+	if result := s.H.DB.Where(&models.Product{Id: product.Id}).First(&product); result.Error != nil {
+		return &pb.DetailProductResponse{
+			Status: http.StatusNotFound,
+			Error:  result.Error.Error(),
+		}, nil
+	}
+
+	return &pb.DetailProductResponse{
+		Status: http.StatusOK,
+		Product: &pb.Product{
+			Id:          int64(product.Id),
+			Name:        product.Name,
+			Slug:        product.Slug,
+			Description: product.Description,
+			Stock:       product.Stock,
+			Price:       product.Price,
+			CreatedAt:   timestamppb.New(product.CreatedAt),
+			UpdatedAt:   timestamppb.New(product.UpdatedAt),
+		},
+	}, nil
+}
+
 func (s *Server) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.DeleteProductResponse, error) {
 	product := models.Product{Id: uint(req.Id)}
 
